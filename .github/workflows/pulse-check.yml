@@ -1,0 +1,70 @@
+name: Pulse Check
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pulse:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check all pulses
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/pulse-check.js
+
+      - name: Send notifications (strike 2)
+        if: hashFiles('scripts/notifications.json') != ''
+        uses: actions/github-script@v7
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+        with:
+          script: |
+            const fs = require('fs');
+            const notifications = JSON.parse(fs.readFileSync('scripts/notifications.json', 'utf8'));
+
+            if (notifications.length === 0) {
+              console.log('No notifications to send.');
+              return;
+            }
+
+            if (!process.env.SMTP_HOST) {
+              console.log('SMTP not configured. Skipping email notifications.');
+              console.log('Would have notified:');
+              for (const n of notifications) {
+                console.log(`  - ${n.name} (${n.contact})`);
+              }
+              return;
+            }
+
+            // Log notifications for now — email integration requires SMTP secrets
+            for (const n of notifications) {
+              console.log(`NOTIFICATION: ${n.name} at ${n.contact} — project flatlining in 7 days`);
+            }
+
+      - name: Commit updated tools.json
+        run: |
+          git config user.name "nopulse-bot"
+          git config user.email "nopulse-bot@users.noreply.github.com"
+          git add tools.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "pulse check $(date +%Y-%m-%d)"
+            git push
+          fi
