@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nopulse.dev — vibecoded project morgue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0a;
+    --bg-card: #111111;
+    --bg-card-hover: #161616;
+    --border: #1a1a1a;
+    --text: #888888;
+    --text-bright: #cccccc;
+    --alive: #00ff41;
+    --alive-dim: #00ff4122;
+    --alive-glow: #00ff4144;
+    --warning: #ffb000;
+    --warning-dim: #ffb00022;
+    --warning-glow: #ffb00044;
+    --dead: #661111;
+    --dead-text: #aa3333;
+    --dead-dim: #66111122;
+    --dead-glow: #66111144;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--dead-text);
+    letter-spacing: 4px;
+    text-transform: lowercase;
+    margin-bottom: 8px;
+  }
+
+  .header h1 .dot {
+    color: var(--dead);
+  }
+
+  .tagline {
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 32px;
+    font-style: italic;
+  }
+
+  /* Flatline animation */
+  .flatline-container {
+    width: 100%;
+    height: 40px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+
+  .flatline-container svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .flatline-line {
+    stroke: var(--dead-text);
+    stroke-width: 1.5;
+    fill: none;
+    opacity: 0.4;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: flatline-draw 4s linear infinite;
+  }
+
+  @keyframes flatline-draw {
+    0% { stroke-dashoffset: 1000; }
+    100% { stroke-dashoffset: 0; }
+  }
+
+  /* Stats */
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .stat--alive .stat-number { color: var(--alive); text-shadow: 0 0 20px var(--alive-glow); }
+  .stat--alive .stat-label { color: var(--alive); opacity: 0.7; }
+  .stat--warning .stat-number { color: var(--warning); text-shadow: 0 0 20px var(--warning-glow); }
+  .stat--warning .stat-label { color: var(--warning); opacity: 0.7; }
+  .stat--dead .stat-number { color: var(--dead-text); text-shadow: 0 0 20px var(--dead-glow); }
+  .stat--dead .stat-label { color: var(--dead-text); opacity: 0.7; }
+
+  /* Alive pulse animation */
+  .stat--alive .stat-number {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { text-shadow: 0 0 10px var(--alive-glow); }
+    50% { text-shadow: 0 0 30px var(--alive), 0 0 60px var(--alive-glow); }
+  }
+
+  /* Filter tabs */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .filter-btn:hover {
+    border-color: var(--text);
+    color: var(--text-bright);
+  }
+
+  .filter-btn.active {
+    border-color: var(--text-bright);
+    color: var(--text-bright);
+    background: var(--bg-card-hover);
+  }
+
+  .filter-btn.active[data-filter="alive"] { border-color: var(--alive); color: var(--alive); }
+  .filter-btn.active[data-filter="warning"] { border-color: var(--warning); color: var(--warning); }
+  .filter-btn.active[data-filter="dead"] { border-color: var(--dead-text); color: var(--dead-text); }
+
+  /* Tools list */
+  .section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--text);
+    margin-bottom: 16px;
+    margin-top: 40px;
+  }
+
+  .tools-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .tool-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    transition: all 0.15s;
+  }
+
+  .tool-card:hover {
+    background: var(--bg-card-hover);
+    border-color: #222;
+  }
+
+  .tool-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .tool-status--alive {
+    background: var(--alive);
+    box-shadow: 0 0 8px var(--alive-glow), 0 0 16px var(--alive-dim);
+    animation: dot-pulse 2s ease-in-out infinite;
+  }
+
+  .tool-status--warning {
+    background: var(--warning);
+    box-shadow: 0 0 8px var(--warning-glow);
+    animation: dot-blink 1.5s ease-in-out infinite;
+  }
+
+  .tool-status--dead {
+    background: var(--dead);
+    opacity: 0.5;
+  }
+
+  @keyframes dot-pulse {
+    0%, 100% { box-shadow: 0 0 4px var(--alive-dim); }
+    50% { box-shadow: 0 0 12px var(--alive), 0 0 24px var(--alive-glow); }
+  }
+
+  @keyframes dot-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .tool-info {
+    min-width: 0;
+  }
+
+  .tool-name {
+    color: var(--text-bright);
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tool-card[data-status="dead"] .tool-name {
+    color: var(--text);
+    text-decoration: line-through;
+    text-decoration-color: var(--dead);
+  }
+
+  .tool-meta {
+    font-size: 11px;
+    color: var(--text);
+    margin-top: 2px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tool-meta a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.15s;
+  }
+
+  .tool-meta a:hover {
+    color: var(--text-bright);
+  }
+
+  .tool-right {
+    text-align: right;
+    white-space: nowrap;
+    font-size: 11px;
+  }
+
+  .tool-right .died {
+    color: var(--dead-text);
+  }
+
+  .tool-right .days {
+    color: var(--text);
+  }
+
+  /* Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .pagination button {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .pagination button:hover:not(:disabled) {
+    border-color: var(--text);
+    color: var(--text-bright);
+  }
+
+  .pagination button:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .pagination button.active {
+    border-color: var(--text-bright);
+    color: var(--text-bright);
+  }
+
+  .pagination .page-info {
+    font-size: 11px;
+    color: var(--text);
+    padding: 0 8px;
+  }
+
+  /* Recent deaths */
+  .morgue {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .morgue-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--dead-text);
+    margin-bottom: 16px;
+  }
+
+  .morgue-entry {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .morgue-entry:last-child { border-bottom: none; }
+
+  .morgue-name {
+    color: var(--text);
+    text-decoration: line-through;
+    text-decoration-color: var(--dead);
+    font-weight: 600;
+  }
+
+  .morgue-cause {
+    font-size: 11px;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  .morgue-date {
+    font-size: 11px;
+    color: var(--dead-text);
+    white-space: nowrap;
+  }
+
+  /* Hero banner */
+  .hero {
+    margin-bottom: 32px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .hero img {
+    width: 100%;
+    height: auto;
+    display: block;
+    opacity: 0.85;
+    transition: opacity 0.3s;
+  }
+
+  .hero:hover img {
+    opacity: 1;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 11px;
+    color: var(--text);
+  }
+
+  .footer a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .footer a:hover { color: var(--text-bright); }
+
+  .footer .quip {
+    margin-top: 8px;
+    font-style: italic;
+    opacity: 0.5;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .stats { gap: 20px; }
+    .stat-number { font-size: 28px; }
+    .tool-card { grid-template-columns: auto 1fr; gap: 12px; }
+    .tool-right { grid-column: 1 / -1; text-align: left; }
+    .morgue-entry { flex-direction: column; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header class="header">
+    <h1>nopulse<span class="dot">.</span>dev</h1>
+    <p class="tagline">where vibecoded dreams come to flatline</p>
+
+    <div class="flatline-container">
+      <svg viewBox="0 0 1000 40" preserveAspectRatio="none">
+        <polyline class="flatline-line" points="0,20 150,20 170,20 180,5 190,35 200,15 210,25 220,20 400,20 1000,20" />
+      </svg>
+    </div>
+
+    <div class="stats" id="stats"></div>
+    <div style="margin-top: 20px; font-size: 11px;"><a href="https://github.com/dygerydoo/nopulse/issues/new?template=add-project.yml" target="_blank">admit a patient</a></div>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <img src="hero.jpg" alt="I've built... 2026-2026 — skeleton presenting a tombstone">
+  </div>
+
+  <!-- Filters -->
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-filter="all">ALL</button>
+    <button class="filter-btn" data-filter="alive">ALIVE</button>
+    <button class="filter-btn" data-filter="warning">WARNING</button>
+    <button class="filter-btn" data-filter="dead">DEAD</button>
+  </div>
+
+  <!-- Patient list -->
+  <div class="section-title">patient registry</div>
+  <div class="tools-list" id="tools-list"></div>
+  <div class="pagination" id="pagination"></div>
+
+  <!-- Recent deaths -->
+  <div class="morgue" id="morgue"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div>nopulse.dev &middot; 2025 &middot; made with &#x1F480; by <a href="https://github.com/dygerydoo" target="_blank">dygerydoo</a> · <a href="https://linkedin.com/in/caserofrancisco" target="_blank">linkedin</a></div>
+    <div class="quip">"most of these were built on a saturday and abandoned by monday"</div>
+  </footer>
+
+</div>
+
+<script>
+const ITEMS_PER_PAGE = 20;
+const STATUS_ORDER = { alive: 0, warning: 1, dead: 2 };
+const CAUSES_OF_DEATH = [
+  "founder discovered maintaining code requires effort",
+  "abandoned after the tweet got less than 10 likes",
+  "deployed once, never again",
+  "cursor subscription expired",
+  "the AI refused to keep fixing the same bug",
+  "ran out of free tier credits",
+  "accidentally deleted the .env and had no idea what was in it",
+  "founder pivoted to the next vibe",
+  "prod went down and nobody noticed for weeks",
+  "the one prompt that held it together stopped working",
+  "heroku bill arrived",
+  "stackoverflow answer that held it together got deleted",
+  "founder got a real job",
+  "realized they needed to actually read the code",
+];
+
+let allTools = [];
+let filteredTools = [];
+let currentFilter = 'all';
+let currentPage = 1;
+
+function daysAgo(dateStr) {
+  if (!dateStr) return null;
+  const diff = Date.now() - new Date(dateStr).getTime();
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+function formatDaysAgo(days) {
+  if (days === null) return '';
+  if (days === 0) return 'today';
+  if (days === 1) return '1 day ago';
+  return `${days} days ago`;
+}
+
+function seededRandom(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function getCauseOfDeath(name) {
+  return CAUSES_OF_DEATH[seededRandom(name) % CAUSES_OF_DEATH.length];
+}
+
+function renderStats(tools) {
+  const counts = { alive: 0, warning: 0, dead: 0 };
+  tools.forEach(t => counts[t.status]++);
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat stat--alive"><div class="stat-number">${counts.alive}</div><div class="stat-label">alive</div></div>
+    <div class="stat stat--warning"><div class="stat-number">${counts.warning}</div><div class="stat-label">warning</div></div>
+    <div class="stat stat--dead"><div class="stat-number">${counts.dead}</div><div class="stat-label">dead</div></div>
+  `;
+}
+
+function renderTool(tool) {
+  const checkedDays = daysAgo(tool.last_checked);
+  const diedDays = daysAgo(tool.died_at);
+
+  let rightContent = '';
+  if (tool.status === 'dead' && tool.died_at) {
+    rightContent = `<span class="died">died ${formatDaysAgo(diedDays)}</span>`;
+  } else if (checkedDays !== null) {
+    rightContent = `<span class="days">checked ${formatDaysAgo(checkedDays)}</span>`;
+  }
+
+  const githubLink = tool.github
+    ? `<a href="https://github.com/${tool.github}" target="_blank">${tool.github}</a>`
+    : '';
+
+  const urlLink = tool.url
+    ? `<a href="${tool.url}" target="_blank">${tool.url.replace('https://', '')}</a>`
+    : '<span>no url. brave.</span>';
+
+  return `
+    <div class="tool-card" data-status="${tool.status}">
+      <div class="tool-status tool-status--${tool.status}"></div>
+      <div class="tool-info">
+        <div class="tool-name">${tool.name}</div>
+        <div class="tool-meta">
+          ${urlLink}
+          ${githubLink}
+          ${tool.strikes > 0 && tool.status !== 'dead' ? `<span>strikes: ${tool.strikes}/3</span>` : ''}
+        </div>
+      </div>
+      <div class="tool-right">${rightContent}</div>
+    </div>
+  `;
+}
+
+function renderList() {
+  const list = document.getElementById('tools-list');
+  const totalPages = Math.max(1, Math.ceil(filteredTools.length / ITEMS_PER_PAGE));
+
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pageTools = filteredTools.slice(start, start + ITEMS_PER_PAGE);
+
+  if (pageTools.length === 0) {
+    list.innerHTML = `<div class="empty-state">no patients match this filter. lucky them.</div>`;
+  } else {
+    list.innerHTML = pageTools.map(renderTool).join('');
+  }
+
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+  const container = document.getElementById('pagination');
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let html = `<button ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">&lt;</button>`;
+
+  const maxVisible = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+  if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+
+  if (startPage > 1) {
+    html += `<button onclick="goToPage(1)">1</button>`;
+    if (startPage > 2) html += `<span class="page-info">...</span>`;
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+  }
+
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) html += `<span class="page-info">...</span>`;
+    html += `<button onclick="goToPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">&gt;</button>`;
+  container.innerHTML = html;
+}
+
+function goToPage(page) {
+  currentPage = page;
+  renderList();
+  document.getElementById('tools-list').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function applyFilter(filter) {
+  currentFilter = filter;
+  currentPage = 1;
+
+  if (filter === 'all') {
+    filteredTools = [...allTools];
+  } else {
+    filteredTools = allTools.filter(t => t.status === filter);
+  }
+
+  filteredTools.sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
+  renderList();
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === filter);
+  });
+}
+
+function renderMorgue(tools) {
+  const dead = tools
+    .filter(t => t.status === 'dead' && t.died_at)
+    .sort((a, b) => new Date(b.died_at) - new Date(a.died_at))
+    .slice(0, 5);
+
+  if (dead.length === 0) {
+    document.getElementById('morgue').innerHTML = '';
+    return;
+  }
+
+  document.getElementById('morgue').innerHTML = `
+    <div class="morgue-title">recent deaths</div>
+    ${dead.map(t => `
+      <div class="morgue-entry">
+        <div>
+          <span class="morgue-name">${t.name}</span>
+          <span class="morgue-cause">&mdash; ${getCauseOfDeath(t.name)}</span>
+        </div>
+        <div class="morgue-date">${t.died_at}</div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function renderFilters() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+  });
+}
+
+async function init() {
+  try {
+    const response = await fetch('tools.json');
+    const data = await response.json();
+    allTools = data.tools || [];
+    allTools.sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
+    filteredTools = [...allTools];
+
+    renderStats(allTools);
+    renderFilters();
+    renderList();
+    renderMorgue(allTools);
+  } catch (error) {
+    document.getElementById('tools-list').innerHTML =
+      `<div class="empty-state">failed to load patient data. the monitor itself is dead. ironic.</div>`;
+  }
+}
+
+init();
+</script>
+
+</body>
+</html>

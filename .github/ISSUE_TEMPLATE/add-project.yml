@@ -1,0 +1,42 @@
+name: "Admit a patient"
+description: "Submit a vibecoded project to the morgue watchlist"
+title: "[ADMIT] "
+labels: ["new-patient"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Welcome to the intake form. Let's see how long this one lasts.
+
+  - type: input
+    id: name
+    attributes:
+      label: Project name
+      description: "What's the patient called?"
+      placeholder: "e.g. GPTWrapper Pro"
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: URL
+      description: "Where can we check the pulse?"
+      placeholder: "https://example.com"
+    validations:
+      required: true
+
+  - type: input
+    id: github
+    attributes:
+      label: GitHub repo (optional)
+      description: "Format: owner/repo"
+      placeholder: "e.g. vibecoder/my-saas"
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        We'll check on it weekly. Good luck keeping it alive. Most don't.

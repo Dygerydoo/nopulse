@@ -1,0 +1,42 @@
+name: "My project is still alive"
+description: "Prove your project hasn't flatlined yet"
+title: "[ALIVE] "
+labels: ["proof-of-life"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Congratulations on making it this far. Most don't.
+
+  - type: input
+    id: name
+    attributes:
+      label: Project name
+      description: "Which patient are you claiming?"
+      placeholder: "e.g. GPTWrapper Pro"
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: URL
+      description: "The URL we have on file"
+      placeholder: "https://example.com"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proof
+    attributes:
+      label: Proof of life
+      description: "What have you done to keep it alive? Recent commits, new features, paying the hosting bill?"
+      placeholder: "I actually read the code this time..."
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        We'll verify and reset your strikes. The clock restarts now.

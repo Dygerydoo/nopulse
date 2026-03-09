@@ -1,0 +1,97 @@
+name: Admit Patient
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  admit:
+    if: contains(github.event.issue.labels.*.name, 'new-patient')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse issue form
+        id: parse
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body;
+
+            function extractField(label) {
+              const regex = new RegExp(`### ${label}\\s*\\n\\s*(.+)`, 'i');
+              const match = body.match(regex);
+              if (!match) return '';
+              const value = match[1].trim();
+              if (value === '_No response_' || value === 'None') return '';
+              return value;
+            }
+
+            const name = extractField('Project name');
+            const url = extractField('URL');
+            const github = extractField('GitHub repo \\(optional\\)');
+
+            if (!name || !url) {
+              core.setFailed('Missing required fields: name and url');
+              return;
+            }
+
+            core.setOutput('name', name);
+            core.setOutput('url', url);
+            core.setOutput('github', github);
+            core.setOutput('branch', `admit/${context.payload.issue.number}`);
+
+      - name: Add patient to tools.json
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('tools.json', 'utf8'));
+            const today = new Date().toISOString().split('T')[0];
+
+            const newPatient = {
+              name: '${{ steps.parse.outputs.name }}',
+              url: '${{ steps.parse.outputs.url }}',
+              github: '${{ steps.parse.outputs.github }}' || null,
+              contact: null,
+              status: 'alive',
+              strikes: 0,
+              last_checked: today,
+              last_confirmed: today,
+              died_at: null
+            };
+
+            data.tools.push(newPatient);
+            fs.writeFileSync('tools.json', JSON.stringify(data, null, 2) + '\n');
+
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="admit/${{ github.event.issue.number }}"
+          git config user.name "nopulse-bot"
+          git config user.email "nopulse-bot@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add tools.json
+          git commit -m "admit: ${{ steps.parse.outputs.name }}"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "Admit: ${{ steps.parse.outputs.name }}" \
+            --body "$(cat <<'EOF'
+          New patient admitted from #${{ github.event.issue.number }}
+
+          **Name:** ${{ steps.parse.outputs.name }}
+          **URL:** ${{ steps.parse.outputs.url }}
+          **GitHub:** ${{ steps.parse.outputs.github }}
+
+          Status: alive (for now)
+
+          Closes #${{ github.event.issue.number }}
+          EOF
+          )" \
+            --base main
