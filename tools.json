@@ -1,6 +1,17 @@
 {
   "tools": [
     {
+      "name": "nopulse.dev",
+      "url": "https://nopulse.dev",
+      "github": "dygerydoo/nopulse",
+      "contact": null,
+      "status": "alive",
+      "strikes": 0,
+      "last_checked": "2026-03-09",
+      "last_confirmed": "2026-03-09",
+      "died_at": null
+    },
+    {
       "name": "Sim Studio",
       "url": "https://simstudio.ai",
       "github": null,
