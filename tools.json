@@ -7,8 +7,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -16,11 +16,11 @@
       "url": "https://simstudio.ai",
       "github": null,
       "contact": null,
-      "status": "warning",
-      "strikes": 2,
-      "last_checked": "2026-03-23",
+      "status": "dead",
+      "strikes": 3,
+      "last_checked": "2026-03-30",
       "last_confirmed": "2026-03-09",
-      "died_at": null
+      "died_at": "2026-03-30"
     },
     {
       "name": "TezNewz",
@@ -29,8 +29,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -40,8 +40,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -51,8 +51,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -62,8 +62,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -73,8 +73,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -84,8 +84,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -93,11 +93,11 @@
       "url": "https://www.bridgemind.ai",
       "github": null,
       "contact": null,
-      "status": "warning",
-      "strikes": 2,
-      "last_checked": "2026-03-23",
+      "status": "dead",
+      "strikes": 3,
+      "last_checked": "2026-03-30",
       "last_confirmed": "2026-03-09",
-      "died_at": null
+      "died_at": "2026-03-30"
     },
     {
       "name": "No Clankers (AI Spam Detector)",
@@ -106,8 +106,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -117,8 +117,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -128,8 +128,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -139,8 +139,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -150,8 +150,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -161,8 +161,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -172,8 +172,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -183,8 +183,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -194,8 +194,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -203,11 +203,11 @@
       "url": "https://capping.pro",
       "github": null,
       "contact": null,
-      "status": "warning",
-      "strikes": 2,
-      "last_checked": "2026-03-23",
+      "status": "dead",
+      "strikes": 3,
+      "last_checked": "2026-03-30",
       "last_confirmed": "2026-03-09",
-      "died_at": null
+      "died_at": "2026-03-30"
     },
     {
       "name": "EventCast",
@@ -216,8 +216,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -225,11 +225,11 @@
       "url": "https://phonecane.com",
       "github": null,
       "contact": null,
-      "status": "warning",
-      "strikes": 2,
-      "last_checked": "2026-03-23",
+      "status": "dead",
+      "strikes": 3,
+      "last_checked": "2026-03-30",
       "last_confirmed": "2026-03-09",
-      "died_at": null
+      "died_at": "2026-03-30"
     },
     {
       "name": "PackZen",
@@ -238,8 +238,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -249,8 +249,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -260,8 +260,8 @@
       "contact": null,
       "status": "alive",
       "strikes": 0,
-      "last_checked": "2026-03-23",
-      "last_confirmed": "2026-03-23",
+      "last_checked": "2026-03-30",
+      "last_confirmed": "2026-03-30",
       "died_at": null
     },
     {
@@ -269,9 +269,9 @@
       "url": "https://lattymoy.github.io/Vestige-Grim-GPS/",
       "github": null,
       "contact": null,
-      "status": "alive",
-      "strikes": 0,
-      "last_checked": "2026-03-23",
+      "status": "warning",
+      "strikes": 1,
+      "last_checked": "2026-03-30",
       "last_confirmed": "2026-03-23",
       "died_at": null
     },
@@ -282,7 +282,7 @@
       "contact": null,
       "status": "warning",
       "strikes": 1,
-      "last_checked": "2026-03-23",
+      "last_checked": "2026-03-30",
       "last_confirmed": null,
       "died_at": null
     },
@@ -293,7 +293,7 @@
       "contact": null,
       "status": "warning",
       "strikes": 1,
-      "last_checked": "2026-03-23",
+      "last_checked": "2026-03-30",
       "last_confirmed": null,
       "died_at": null
     },
@@ -304,7 +304,7 @@
       "contact": null,
       "status": "warning",
       "strikes": 1,
-      "last_checked": "2026-03-23",
+      "last_checked": "2026-03-30",
       "last_confirmed": null,
       "died_at": null
     },
@@ -315,7 +315,7 @@
       "contact": null,
       "status": "warning",
       "strikes": 1,
-      "last_checked": "2026-03-23",
+      "last_checked": "2026-03-30",
       "last_confirmed": null,
       "died_at": null
     },
@@ -326,7 +326,7 @@
       "contact": null,
       "status": "warning",
       "strikes": 1,
-      "last_checked": "2026-03-23",
+      "last_checked": "2026-03-30",
       "last_confirmed": null,
       "died_at": null
     },
@@ -337,7 +337,7 @@
       "contact": null,
       "status": "warning",
       "strikes": 1,
-      "last_checked": "2026-03-23",
+      "last_checked": "2026-03-30",
       "last_confirmed": null,
       "died_at": null
     },
@@ -348,7 +348,7 @@
       "contact": null,
       "status": "dead",
       "strikes": 3,
-      "last_checked": "2026-03-23",
+      "last_checked": "2026-03-30",
       "last_confirmed": null,
       "died_at": "2026-03-09"
     }
